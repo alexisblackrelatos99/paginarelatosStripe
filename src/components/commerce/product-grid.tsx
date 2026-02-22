@@ -1,19 +1,17 @@
 import { Link } from 'react-router-dom';
-import { ShoppingCart } from 'lucide-react';
+import { BookOpen } from 'lucide-react';
 import { Pagination } from '@/components/shared/pagination';
 import { SortDropdown } from './sort-dropdown';
 import { Price } from '@/components/commerce/price';
 import { Button } from '@/components/ui/button';
-import { useCart } from '@/contexts/cart-context';
-import { toast } from 'sonner';
-import type { CatalogProduct, ProductVariant } from '@/data/catalog';
+import type { CatalogProduct } from '@/data/catalog';
 
 interface ProductGridProps {
   items: CatalogProduct[];
   totalItems: number;
   currentPage: number;
   totalPages: number;
-  showAddToCart?: boolean;
+  showReadButton?: boolean;
   showPrice?: boolean;
 }
 
@@ -27,35 +25,14 @@ function getReadingTimeMinutes(text: string): number {
   return Math.max(1, Math.ceil(words / 200));
 }
 
-function getDefaultVariant(product: CatalogProduct): ProductVariant | null {
-  if (!product.variants.length) {
-    return null;
-  }
-
-  return [...product.variants].sort((a, b) => a.priceWithTax - b.priceWithTax)[0] ?? null;
-}
-
 export function ProductGrid({
   items,
   totalItems,
   currentPage,
   totalPages,
-  showAddToCart = false,
+  showReadButton = false,
   showPrice = true,
 }: ProductGridProps) {
-  const { addToCart } = useCart();
-
-  const handleAddToCart = (product: CatalogProduct) => {
-    const variant = getDefaultVariant(product);
-
-    if (!variant) {
-      return;
-    }
-
-    addToCart(product, variant, 1);
-    toast.success('Relato agregado al carrito');
-  };
-
   if (!items.length) {
     return (
       <div className="text-center py-12">
@@ -113,15 +90,12 @@ export function ProductGrid({
                     )}
                   </div>
                 </Link>
-                {showAddToCart && (
-                  <Button
-                    type="button"
-                    onClick={() => handleAddToCart(product)}
-                    className="inline-flex w-full items-center justify-center gap-2 md:w-auto md:shrink-0"
-                    aria-label={`Agregar ${product.name} al carrito`}
-                  >
-                    <ShoppingCart className="h-4 w-4" aria-hidden="true" />
-                    Agregar al carrito
+                {showReadButton && (
+                  <Button asChild className="inline-flex w-full items-center justify-center gap-2 md:w-auto md:shrink-0">
+                    <Link to={`/product/${product.slug}`} aria-label={`Leer ${product.name}`}>
+                      <BookOpen className="h-4 w-4" aria-hidden="true" />
+                      Leer
+                    </Link>
                   </Button>
                 )}
               </div>

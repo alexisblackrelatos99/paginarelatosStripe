@@ -90,6 +90,7 @@ export function CartPage() {
                   <Price value={activeOrder.totalWithTax} currencyCode={activeOrder.currencyCode} />
                 </span>
               </div>
+              <p className="mt-2 text-xs text-muted-foreground">Compra mínima: 1,5$</p>
             </div>
 
             <Button className="w-full" size="lg" asChild>

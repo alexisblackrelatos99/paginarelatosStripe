@@ -124,7 +124,7 @@ export function CollectionPage() {
         totalItems={result.totalItems}
         currentPage={currentPage}
         totalPages={result.totalPages}
-        showAddToCart={isCatalogCollection}
+        showReadButton={isCatalogCollection}
         showPrice={!isLibraryCollection}
       />
     </div>

@@ -18,6 +18,8 @@ function checkoutErrorMessage(error: unknown): string {
         return 'El importe minimo de Stripe para USD es 0.50. Aumenta el total del carrito.';
       case 'STORY_NOT_FOUND':
         return 'Uno de los relatos ya no esta disponible.';
+      case 'STORY_ALREADY_PURCHASED':
+        return 'Tu carrito incluye relatos que ya compraste. Eliminalos para continuar.';
       case 'STRIPE_NOT_CONFIGURED':
         return 'El sistema de pago no esta configurado.';
       case 'PAYMENT_PROVIDER_ERROR':
