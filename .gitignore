@@ -1,5 +1,12 @@
 node_modules
-.DS_Store
-.env
 dist
 build
+.DS_Store
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+coverage
+.vscode
+.idea
