@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { storiesApi } from '../../api/stories-api';
 import { storyToCatalogProduct, type CatalogProduct } from '@/data/catalog';
+import { mockFantasyStories } from '@/data/mock-fantasy-stories';
 import { ApiError } from '../../api/http-client';
 
 interface UseCatalogStoriesResult {
@@ -15,6 +16,20 @@ type StoriesScope = 'catalog' | 'library';
 interface UseCatalogStoriesOptions {
   scope?: StoriesScope;
   accessToken?: string | null;
+}
+
+const mockCatalogProducts = mockFantasyStories.map(storyToCatalogProduct);
+
+function mergeCatalogProducts(products: CatalogProduct[]): CatalogProduct[] {
+  const merged = new Map<string, CatalogProduct>();
+
+  for (const product of [...products, ...mockCatalogProducts]) {
+    if (!merged.has(product.slug)) {
+      merged.set(product.slug, product);
+    }
+  }
+
+  return Array.from(merged.values());
 }
 
 function codeFromError(error: unknown): string {
@@ -48,10 +63,21 @@ export function useCatalogStories(options: UseCatalogStoriesOptions = {}): UseCa
         scope === 'library' && accessToken
           ? await storiesApi.listLibraryStories(accessToken)
           : await storiesApi.listStories(accessToken);
-      setProducts(stories.map(storyToCatalogProduct));
+      const fetchedProducts = stories.map(storyToCatalogProduct);
+
+      if (scope === 'catalog') {
+        setProducts(mergeCatalogProducts(fetchedProducts));
+      } else {
+        setProducts(fetchedProducts);
+      }
     } catch (error) {
-      setProducts([]);
-      setErrorCode(codeFromError(error));
+      if (scope === 'catalog') {
+        setProducts(mockCatalogProducts);
+        setErrorCode(null);
+      } else {
+        setProducts([]);
+        setErrorCode(codeFromError(error));
+      }
     } finally {
       setIsLoading(false);
     }
